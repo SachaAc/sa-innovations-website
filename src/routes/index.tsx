@@ -343,7 +343,7 @@ function Contact() {
 
     try {
       const response = await fetch(
-        "https://formspree.io/f/JOUW_ENDPOINT",
+        "https://formspree.io/f/mjgqvrjk",
         {
           method: "POST",
           body: new FormData(e.currentTarget),
@@ -457,7 +457,7 @@ function Field({
         required={required}
         className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-foreground/40 focus:border-foreground"
       />
-    </div>* ---------- Contact ---------- */
+    </div>/* ---------- Contact ---------- */
   function Contact() {
     const [submitting, setSubmitting] = useState(false);
 
