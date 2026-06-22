@@ -336,23 +336,41 @@ function Waarom() {
 function Contact() {
   const [submitting, setSubmitting] = useState(false);
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setSubmitting(true);
-    const data = new FormData(e.currentTarget);
-    const naam = String(data.get("naam") || "").trim();
-    const email = String(data.get("email") || "").trim();
-    const bericht = String(data.get("bericht") || "").trim();
-    if (!naam || !email || !bericht) {
-      toast.error("Vul a.u.b. alle verplichte velden in.");
-      setSubmitting(false);
-      return;
+
+    try {
+      const response = await fetch(
+        "https://formspree.io/f/JOUW_ENDPOINT",
+        {
+          method: "POST",
+          body: new FormData(e.currentTarget),
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        toast.success(
+          "Bedankt! Ik neem zo snel mogelijk contact met u op."
+        );
+
+        e.currentTarget.reset();
+      } else {
+        toast.error(
+          "Er is iets misgegaan. Probeer het later opnieuw."
+        );
+      }
+    } catch {
+      toast.error(
+        "Er is iets misgegaan. Probeer het later opnieuw."
+      );
     }
-    setTimeout(() => {
-      toast.success("Bedankt! Ik neem zo snel mogelijk contact met u op.");
-      (e.target as HTMLFormElement).reset();
-      setSubmitting(false);
-    }, 400);
+
+    setSubmitting(false);
   };
 
   return (
@@ -439,7 +457,116 @@ function Field({
         required={required}
         className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-foreground/40 focus:border-foreground"
       />
-    </div>
+    </div>* ---------- Contact ---------- */
+  function Contact() {
+    const [submitting, setSubmitting] = useState(false);
+
+    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setSubmitting(true);
+      const data = new FormData(e.currentTarget);
+      const naam = String(data.get("naam") || "").trim();
+      const email = String(data.get("email") || "").trim();
+      const bericht = String(data.get("bericht") || "").trim();
+      if (!naam || !email || !bericht) {
+        toast.error("Vul a.u.b. alle verplichte velden in.");
+        setSubmitting(false);
+        return;
+      }
+      setTimeout(() => {
+        toast.success("Bedankt! Ik neem zo snel mogelijk contact met u op.");
+        (e.target as HTMLFormElement).reset();
+        setSubmitting(false);
+      }, 400);
+    };
+
+    return (
+      <section id="contact" className="bg-background py-24 md:py-32">
+        <div className="mx-auto max-w-3xl px-6">
+          <div className="text-center">
+            <Reveal>
+              <p className="text-xs uppercase tracking-[0.25em] text-foreground/50">Contact</p>
+            </Reveal>
+            <Reveal delay={100}>
+              <h2 className="mt-4 text-3xl md:text-5xl">
+                Laten we <span className="italic">kennismaken</span>
+              </h2>
+            </Reveal>
+            <Reveal delay={180}>
+              <p className="mt-6 text-foreground/70">
+                Plan een gratis consult van 30 minuten of stel gerust uw vraag.
+              </p>
+            </Reveal>
+          </div>
+
+          <Reveal delay={240}>
+            <form
+              onSubmit={onSubmit}
+              className="mt-12 rounded-2xl border border-border bg-card p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] md:p-10"
+              noValidate
+            >
+              <div className="grid gap-5 md:grid-cols-2">
+                <Field label="Naam" name="naam" required />
+                <Field label="E-mailadres" name="email" type="email" required />
+                <Field label="Telefoonnummer" name="telefoon" type="tel" className="md:col-span-2" />
+                <div className="md:col-span-2">
+                  <label htmlFor="bericht" className="mb-2 block text-sm text-foreground/70">
+                    Bericht <span className="text-foreground/40">*</span>
+                  </label>
+                  <textarea
+                    id="bericht"
+                    name="bericht"
+                    required
+                    rows={5}
+                    className="w-full resize-y rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-foreground/40 focus:border-foreground"
+                    placeholder="Vertel kort waar ik je mee kan helpen…"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-sm font-medium tracking-wide text-primary-foreground transition-all hover:shadow-lg disabled:opacity-60 md:w-auto"
+              >
+                {submitting ? "Versturen…" : "Verstuur bericht"}
+                <ArrowRight size={16} />
+              </button>
+            </form>
+          </Reveal>
+        </div>
+      </section>
+    );
+  }
+
+  function Field({
+                   label,
+                   name,
+                   type = "text",
+                   required = false,
+                   className = "",
+                 }: {
+    label: string;
+    name: string;
+    type?: string;
+    required?: boolean;
+    className?: string;
+  }) {
+    return (
+      <div className={className}>
+        <label htmlFor={name} className="mb-2 block text-sm text-foreground/70">
+          {label} {required && <span className="text-foreground/40">*</span>}
+        </label>
+        <input
+          id={name}
+          name={name}
+          type={type}
+          required={required}
+          className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-foreground/40 focus:border-foreground"
+        />
+      </div>
+    );
+  }
   );
 }
 
